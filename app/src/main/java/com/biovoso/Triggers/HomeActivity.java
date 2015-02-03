@@ -24,6 +24,7 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,11 +32,16 @@ import java.util.List;
 public class HomeActivity extends BaseActivity {
 
     private DrawerLayout drawer;
+    private DatabaseHelper db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setActionBarIcon(R.drawable.ic_ab_drawer);
+
+        db = new DatabaseHelper(getApplicationContext());
+
+        loadIcons();
 
         drawer = (DrawerLayout) findViewById(R.id.drawer);
         drawer.setDrawerShadow(R.drawable.drawer_shadow, Gravity.START);
@@ -48,6 +54,27 @@ public class HomeActivity extends BaseActivity {
 
         ButtonAdapter ca = new ButtonAdapter(createList(30));
         recList.setAdapter(ca);
+    }
+
+    private void loadIcons()
+    {
+        List<Integer> ids = new ArrayList<Integer>();
+        Field[] drawables = R.drawable.class.getFields();
+        for (Field f : drawables) {
+            try
+            {
+                String fName = f.getName();
+                if(fName.substring(0,4) == "icon")
+                {
+                    ids.add(getResources().getIdentifier(f.getName(), "drawable", getPackageName()));
+                }
+
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override protected int getLayoutResource() {
@@ -75,7 +102,7 @@ public class HomeActivity extends BaseActivity {
 
         List<Button> result = new ArrayList<Button>();
         for (int i=1; i <= size; i++) {
-            Button ci = new Button();
+            Button ci = new Button(this);
             ci.name = Integer.toString(i);
 
             result.add(ci);

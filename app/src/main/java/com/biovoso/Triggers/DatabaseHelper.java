@@ -28,6 +28,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
     private static final String KEY_IID = "iid";
     private static final String KEY_DESC = "desc";
     private static final String KEY_GID = "gid";
+    private Context context;
 
     private static final String CREATE_TABLE_BUTTONS = "CREATE TABLE "
             + TABLE_BUTTONS + "(" + KEY_ID + " INTEGER PRIMARY KEY,"
@@ -41,6 +42,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
     public DatabaseHelper(Context context)
     {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        this.context = context;
     }
 
     @Override
@@ -96,7 +98,7 @@ public class DatabaseHelper extends SQLiteOpenHelper
 
         if (c.moveToFirst()) {
             do {
-                Button btn = new Button();
+                Button btn = new Button(context);
                 btn.id = (c.getInt((c.getColumnIndex(KEY_ID))));
                 btn.name = ((c.getString(c.getColumnIndex(KEY_NAME))));
                 btn.description = (c.getString(c.getColumnIndex(KEY_DESC)));

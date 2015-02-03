@@ -29,7 +29,7 @@ public class ButtonAdapter extends RecyclerView.Adapter<ButtonAdapter.ContactVie
         Button ci = buttonList.get(i);
         contactViewHolder.vTitle.setText(ci.name);
         contactViewHolder.vDesc.setText(ci.description);
-        contactViewHolder.vIcon.setImageDrawable(ci.icon);
+        contactViewHolder.vIcon.setImageDrawable(ci.getIcon());
     }
 
     @Override
