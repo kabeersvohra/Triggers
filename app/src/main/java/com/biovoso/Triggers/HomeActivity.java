@@ -18,6 +18,7 @@ package com.biovoso.Triggers;
 
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
@@ -27,12 +28,15 @@ import android.view.MenuItem;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 
 public class HomeActivity extends BaseActivity {
 
     private DrawerLayout drawer;
     private DatabaseHelper db;
+    private ButtonAdapter ca;
+    private List<Integer> ids;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +44,10 @@ public class HomeActivity extends BaseActivity {
         setActionBarIcon(R.drawable.ic_ab_drawer);
 
         db = new DatabaseHelper(getApplicationContext());
+        Group group0 = new Group();
+        group0.id = 0;
+        group0.name = "zero";
+        db.createGroup(group0);
 
         loadIcons();
 
@@ -51,20 +59,21 @@ public class HomeActivity extends BaseActivity {
         LinearLayoutManager llm = new LinearLayoutManager(this);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recList.setLayoutManager(llm);
+        recList.setItemAnimator(new DefaultItemAnimator());
 
-        ButtonAdapter ca = new ButtonAdapter(createList(30));
+        ca = new ButtonAdapter(db.getButtons(0));
         recList.setAdapter(ca);
     }
 
     private void loadIcons()
     {
-        List<Integer> ids = new ArrayList<Integer>();
+        this.ids = new ArrayList<Integer>();
         Field[] drawables = R.drawable.class.getFields();
         for (Field f : drawables) {
             try
             {
                 String fName = f.getName();
-                if(fName.substring(0,4) == "icon")
+                if(fName.startsWith("icon"))
                 {
                     ids.add(getResources().getIdentifier(f.getName(), "drawable", getPackageName()));
                 }
@@ -75,6 +84,8 @@ public class HomeActivity extends BaseActivity {
                 e.printStackTrace();
             }
         }
+
+
     }
 
     @Override protected int getLayoutResource() {
@@ -93,6 +104,10 @@ public class HomeActivity extends BaseActivity {
             case android.R.id.home:
                 drawer.openDrawer(Gravity.START);
                 return true;
+            case R.id.action_edit:
+                db.createButton(createList(1).get(0));
+                ca.redoList(db.getButtons(0));
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -104,7 +119,9 @@ public class HomeActivity extends BaseActivity {
         for (int i=1; i <= size; i++) {
             Button ci = new Button(this);
             ci.name = Integer.toString(i);
-
+            ci.description = "udfiufbiub";
+            Random random = new Random();
+            ci.iconId = ids.get(random.nextInt(ids.size()));
             result.add(ci);
 
         }

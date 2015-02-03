@@ -75,7 +75,8 @@ public class DatabaseHelper extends SQLiteOpenHelper
         return button_id;
     }
 
-    public long createGroup(Group group) {
+    public long createGroup(Group group)
+    {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();

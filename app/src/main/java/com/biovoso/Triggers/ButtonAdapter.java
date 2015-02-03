@@ -14,7 +14,8 @@ public class ButtonAdapter extends RecyclerView.Adapter<ButtonAdapter.ContactVie
 
     private List<Button> buttonList;
 
-    public ButtonAdapter(List<Button> buttonList) {
+    public ButtonAdapter(List<Button> buttonList)
+    {
         this.buttonList = buttonList;
     }
 
@@ -29,7 +30,7 @@ public class ButtonAdapter extends RecyclerView.Adapter<ButtonAdapter.ContactVie
         Button ci = buttonList.get(i);
         contactViewHolder.vTitle.setText(ci.name);
         contactViewHolder.vDesc.setText(ci.description);
-        contactViewHolder.vIcon.setImageDrawable(ci.getIcon());
+        contactViewHolder.vIcon.setImageResource(ci.iconId);
     }
 
     @Override
@@ -53,5 +54,11 @@ public class ButtonAdapter extends RecyclerView.Adapter<ButtonAdapter.ContactVie
             vDesc = (TextView) v.findViewById(R.id.desc);
             vIcon = (ImageView) v.findViewById(R.id.icon);
         }
+    }
+
+    public void redoList(List<Button> buttonList)
+    {
+        this.buttonList = buttonList;
+        notifyDataSetChanged();
     }
 }
