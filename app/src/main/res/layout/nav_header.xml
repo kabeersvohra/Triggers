@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="170dp"
+                android:background="@drawable/biovoso"
+                android:orientation="vertical"
+                android:weightSum="1">
+
+    <ImageView
+        android:layout_width="95dp"
+        android:layout_height="95dp"
+        android:src="@drawable/ic_launcher"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="25dp"
+        android:id="@+id/circleView"
+        />
+
+    <TextView
+        android:id="@+id/name"
+        android:layout_below="@+id/circleView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="8dp"
+        android:textColor="#ffffff"
+        android:text="Trigg"
+        android:textSize="16sp"
+        android:textStyle="bold"
+
+        />
+
+</RelativeLayout>

@@ -18,12 +18,15 @@ package com.biovoso.Triggers;
 
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -33,15 +36,26 @@ import java.util.Random;
 
 public class HomeActivity extends BaseActivity {
 
-    private DrawerLayout drawer;
     private DatabaseHelper db;
-    private ButtonAdapter ca;
     private List<Integer> ids;
+
+    private Toolbar toolbar;
+
+    private RecyclerView navRec;
+    private RecyclerView.Adapter navRecAdap;
+    private RecyclerView.LayoutManager navRecLM;
+
+    private RecyclerView mainRec;
+    private ButtonAdapter mainRecAdap;
+    private LinearLayoutManager mainRecLM;
+
+    private String TITLES[] = {"Home","Events","Mail","Shop","Travel"};
+    private DrawerLayout drawer;
+    private ActionBarDrawerToggle drawerToggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setActionBarIcon(R.drawable.ic_ab_drawer);
 
         db = new DatabaseHelper(getApplicationContext());
         Group group0 = new Group();
@@ -49,20 +63,52 @@ public class HomeActivity extends BaseActivity {
         group0.name = "zero";
         db.createGroup(group0);
 
-        loadIcons();
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        navRec = (RecyclerView) findViewById(R.id.RecyclerView);
+        navRec.setHasFixedSize(true);
+        navRecAdap = new navAdapter(TITLES);
+        navRec.setAdapter(navRecAdap);
+        navRecLM = new LinearLayoutManager(this);
+        navRec.setLayoutManager(navRecLM);
+
+        mainRec = (RecyclerView) findViewById(R.id.cardList);
+        mainRec.setHasFixedSize(true);
+        mainRecLM = new LinearLayoutManager(this);
+        mainRecLM.setOrientation(LinearLayoutManager.VERTICAL);
+        mainRec.setLayoutManager(mainRecLM);
+        mainRec.setItemAnimator(new DefaultItemAnimator());
+        mainRecAdap = new ButtonAdapter(db.getButtons(0));
+        mainRec.setAdapter(mainRecAdap);
 
         drawer = (DrawerLayout) findViewById(R.id.drawer);
         drawer.setDrawerShadow(R.drawable.drawer_shadow, Gravity.START);
+        drawerToggle = new ActionBarDrawerToggle(this, drawer,toolbar,R.string.navigation_drawer_open,R.string.navigation_drawer_close){
 
-        RecyclerView recList = (RecyclerView) findViewById(R.id.cardList);
-        recList.setHasFixedSize(true);
-        LinearLayoutManager llm = new LinearLayoutManager(this);
-        llm.setOrientation(LinearLayoutManager.VERTICAL);
-        recList.setLayoutManager(llm);
-        recList.setItemAnimator(new DefaultItemAnimator());
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                // code here will execute once the drawer is opened( As I dont want anything happened whe drawer is
+                // open I am not going to put anything here)
+            }
 
-        ca = new ButtonAdapter(db.getButtons(0));
-        recList.setAdapter(ca);
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+                // Code here will execute once drawer is closed
+            }
+
+
+
+        };
+        drawer.setDrawerListener(drawerToggle); // drawer Listener set to the drawer toggle
+        drawerToggle.syncState();               // Finally we set the drawer toggle sync State
+
+        loadIcons();
+
+
+
     }
 
     private void loadIcons()
@@ -101,12 +147,12 @@ public class HomeActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case android.R.id.home:
-                drawer.openDrawer(Gravity.START);
-                return true;
+//            case android.R.id.home:
+//                drawer.openDrawer(Gravity.START);
+//                return true;
             case R.id.action_edit:
                 db.createButton(createList(1).get(0));
-                ca.redoList(db.getButtons(0));
+                mainRecAdap.redoList(db.getButtons(0));
                 return true;
         }
 
