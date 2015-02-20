@@ -16,6 +16,7 @@
 
 package com.biovoso.Triggers;
 
+import android.animation.ObjectAnimator;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -23,11 +24,13 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -53,12 +56,18 @@ public class HomeActivity extends BaseActivity {
     private String TITLES[] = {"Home","Events","Mail","Shop","Travel"};
     private DrawerLayout drawer;
     private ActionBarDrawerToggle drawerToggle;
+    private ImageButton fabImageButton;
+    private ObjectAnimator floatIn;
+    private ObjectAnimator floatOut;
+    private float fabOffset;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        ImageButton fabImageButton = (ImageButton) findViewById(R.id.fab_image_button);
+        fabOffset = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 72, getResources().getDisplayMetrics());
+
+        fabImageButton = (ImageButton) findViewById(R.id.fab_image_button);
 
         fabImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,6 +76,9 @@ public class HomeActivity extends BaseActivity {
                 mainRecAdap.redoList(db.getButtons(0));
             }
         });
+
+        floatIn = ObjectAnimator.ofFloat(fabImageButton, "translationX", 0, (fabOffset * -1));
+        floatOut = ObjectAnimator.ofFloat(fabImageButton, "translationX", 0, fabOffset);
 
         db = new DatabaseHelper(getApplicationContext());
         Group group0 = new Group();
@@ -79,7 +91,7 @@ public class HomeActivity extends BaseActivity {
 
         navRec = (RecyclerView) findViewById(R.id.RecyclerView);
         navRec.setHasFixedSize(true);
-        navRecAdap = new navAdapter(TITLES);
+        navRecAdap = new navAdapter(TITLES, this);
         navRec.setAdapter(navRecAdap);
         navRecLM = new LinearLayoutManager(this);
         navRec.setLayoutManager(navRecLM);
@@ -100,8 +112,7 @@ public class HomeActivity extends BaseActivity {
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-                // code here will execute once the drawer is opened( As I dont want anything happened whe drawer is
-                // open I am not going to put anything here)
+                // if in edit mode to go back to normal mode
             }
 
             @Override
@@ -162,8 +173,13 @@ public class HomeActivity extends BaseActivity {
 //                drawer.openDrawer(Gravity.START);
 //                return true;
             case R.id.action_edit:
+                //I want to make the edit button smaller and when the button is pressed to
+                // change to an x and call another function onselect when changed but I don't
+                // know how
                 db.createButton(createList(1).get(0));
                 mainRecAdap.redoList(db.getButtons(0));
+                floatIn.start();
+                fabImageButton.setTranslationX(-1 * fabOffset);
                 return true;
         }
 

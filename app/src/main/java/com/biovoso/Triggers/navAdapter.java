@@ -3,17 +3,16 @@ package com.biovoso.Triggers;
 /**
  * Created by mmanghnani on 07/02/15.
  */
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-/**
- * Created by hp1 on 28-12-2014.
- */
 public class navAdapter extends RecyclerView.Adapter<navAdapter.ViewHolder>
 {
 
@@ -22,7 +21,7 @@ public class navAdapter extends RecyclerView.Adapter<navAdapter.ViewHolder>
     private static final int TYPE_ITEM = 1;
 
     private String mNavTitles[]; // String Array to store the passed titles Value from MainActivity.java
-    private int mIcons[];       // Int Array to store the passed icons resource value from MainActivity.java
+    private Context context;
 
     public static class ViewHolder extends RecyclerView.ViewHolder
     {
@@ -30,6 +29,7 @@ public class navAdapter extends RecyclerView.Adapter<navAdapter.ViewHolder>
 
         TextView textView;
         ImageView imageView;
+        LinearLayout rowView;
         TextView Name;
 
 
@@ -41,6 +41,7 @@ public class navAdapter extends RecyclerView.Adapter<navAdapter.ViewHolder>
             {
                 textView = (TextView) itemView.findViewById(R.id.rowText); // Creating TextView object with the id of textView from item_row.xml
                 imageView = (ImageView) itemView.findViewById(R.id.rowIcon);// Creating ImageView object with the id of ImageView from item_row.xml
+                rowView = (LinearLayout) itemView.findViewById(R.id.row); // Creating LinearLayout object with the entire row
                 Holderid = 1;                                               // setting holder id as 1 as the object being populated are of type item row
             }
             else
@@ -55,10 +56,7 @@ public class navAdapter extends RecyclerView.Adapter<navAdapter.ViewHolder>
 
 
 
-    navAdapter(String Titles[])
-    {
-        mNavTitles = Titles;
-    }
+    navAdapter(String Titles[], Context context) { mNavTitles = Titles; this.context = context; }
 
 
 
@@ -101,10 +99,20 @@ public class navAdapter extends RecyclerView.Adapter<navAdapter.ViewHolder>
     // Tells us item at which position is being constructed to be displayed and the holder id of the holder object tell us
     // which view type is being created 1 for item row
     @Override
-    public void onBindViewHolder(navAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(navAdapter.ViewHolder holder, final int position) {
         if(holder.Holderid ==1) {                              // as the list view is going to be called after the header view so we decrement the
             // position by 1 and pass it to the holder while setting the text and image
             holder.textView.setText(mNavTitles[position - 1]); // Setting the Text with the array of our Titles
+            holder.rowView.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if(context instanceof HomeActivity){
+                                ((HomeActivity)context).getSupportActionBar().setTitle(mNavTitles[position - 1]);
+                            }
+                        }
+                    }
+            );
         }
         else{
 
@@ -121,7 +129,7 @@ public class navAdapter extends RecyclerView.Adapter<navAdapter.ViewHolder>
     }
 
 
-    // Witht the following method we check what type of view is being passed
+    // With the following method we check what type of view is being passed
     @Override
     public int getItemViewType(int position) {
         if (isPositionHeader(position))

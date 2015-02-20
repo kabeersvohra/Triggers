@@ -7,9 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
+
 
         <include
             android:id="@+id/toolbar"
@@ -22,20 +20,45 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/cardList"
-                android:layout_below="@id/toolbar"
                 android:scrollbars="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
 
+                <RelativeLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:id="@+id/fab_image_view">
+
+                    <ImageButton
+                        android:id="@+id/fab_image_button"
+                        android:layout_width="@dimen/fab_button_diameter"
+                        android:layout_height="@dimen/fab_button_diameter"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginBottom="@dimen/fab_button_margin_bottom"
+                        android:layout_marginRight="@dimen/fab_button_margin_right"
+                        android:background="@drawable/fab_shape"
+                        android:src="@drawable/fab_ic_add"
+                        android:scaleType="fitCenter"
+                        android:padding="@dimen/fab_button_padding"
+                        android:tint="@android:color/white"/>
+
+                </RelativeLayout>
+
+            </RelativeLayout>
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/RecyclerView"
                 android:layout_width="304dp"
                 android:background="#ffffff"
                 android:layout_height="match_parent"
-
                 android:layout_gravity="left"
                 android:scrollbars="vertical"
                 >
@@ -43,32 +66,6 @@
             </android.support.v7.widget.RecyclerView>
 
         </android.support.v4.widget.DrawerLayout>
-
-    </RelativeLayout>
-
-
-
-    <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
-
-        <ImageButton
-            android:id="@+id/fab_image_button"
-            android:layout_width="@dimen/fab_button_diameter"
-            android:layout_height="@dimen/fab_button_diameter"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="@dimen/fab_button_margin_bottom"
-            android:layout_marginRight="@dimen/fab_button_margin_right"
-            android:background="@drawable/fab_shape"
-            android:src="@drawable/fab_ic_add"
-            android:scaleType="fitCenter"
-            android:padding="@dimen/fab_button_padding"
-            android:tint="@android:color/white"/>
-
-    </RelativeLayout>
-
 
 
 </RelativeLayout>
