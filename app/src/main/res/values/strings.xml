@@ -16,7 +16,7 @@
 -->
 <resources>
 
-    <string name="app_name">Triggers</string>
+    <string name="app_name">Trigg</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="title_section1">Section 1</string>
     <string name="title_section2">Section 2</string>

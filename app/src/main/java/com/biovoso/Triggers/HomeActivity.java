@@ -27,6 +27,7 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -56,6 +57,16 @@ public class HomeActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        ImageButton fabImageButton = (ImageButton) findViewById(R.id.fab_image_button);
+
+        fabImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                db.createButton(createList(1).get(0));
+                mainRecAdap.redoList(db.getButtons(0));
+            }
+        });
 
         db = new DatabaseHelper(getApplicationContext());
         Group group0 = new Group();
