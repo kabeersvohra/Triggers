@@ -187,8 +187,6 @@ public class HomeActivity extends BaseActivity {
                 //I want to make the edit button smaller and when the button is pressed to
                 // change to an x and call another function onselect when changed but I don't
                 // know how
-                db.createButton(createList(1).get(0));
-                mainRecAdap.redoList(db.getButtons(0));
                 floatIn.start();
                 fabImageButton.setTranslationX(-1 * fabOffset);
                 populateAnimators();
@@ -233,7 +231,11 @@ public class HomeActivity extends BaseActivity {
             valueAnimators.add(valueAnimator);
         }
         ValueAnimator[] objectAnimators = valueAnimators.toArray(new ValueAnimator[valueAnimators.size()]);
-        openAnimSet.playTogether(objectAnimators);
+
+        if (mainRec.getChildCount() > 0)
+        {
+            openAnimSet.playTogether(objectAnimators);
+        }
     }
 
 }
