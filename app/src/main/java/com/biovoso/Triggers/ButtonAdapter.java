@@ -61,4 +61,9 @@ public class ButtonAdapter extends RecyclerView.Adapter<ButtonAdapter.ContactVie
         this.buttonList = buttonList;
         notifyDataSetChanged();
     }
+
+    public List<Button> getButtonList()
+    {
+        return buttonList;
+    }
 }

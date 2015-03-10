@@ -24,16 +24,13 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent">
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/cardList"
-                android:scrollbars="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
-
-                <RelativeLayout
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:id="@+id/fab_image_view">
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/cardList"
+                    android:scrollbars="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp"/>
 
                     <ImageButton
                         android:id="@+id/fab_image_button"
@@ -50,7 +47,6 @@
                         android:padding="@dimen/fab_button_padding"
                         android:tint="@android:color/white"/>
 
-                </RelativeLayout>
 
             </RelativeLayout>
 

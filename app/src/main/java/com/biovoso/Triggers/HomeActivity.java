@@ -16,7 +16,9 @@
 
 package com.biovoso.Triggers;
 
+import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -61,11 +63,20 @@ public class HomeActivity extends BaseActivity {
     private ObjectAnimator floatOut;
     private float fabOffset;
 
+    private AnimatorSet openAnimSet = new AnimatorSet();;
+    private AnimatorSet closeAnimSet;
+
+    private int cardClosedHeight;
+    private int cardOpenHeight;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         fabOffset = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 72, getResources().getDisplayMetrics());
+        cardClosedHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 110, getResources().getDisplayMetrics());
+        cardOpenHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 158, getResources().getDisplayMetrics());
+
 
         fabImageButton = (ImageButton) findViewById(R.id.fab_image_button);
 
@@ -180,6 +191,8 @@ public class HomeActivity extends BaseActivity {
                 mainRecAdap.redoList(db.getButtons(0));
                 floatIn.start();
                 fabImageButton.setTranslationX(-1 * fabOffset);
+                populateAnimators();
+                openAnimSet.start();
                 return true;
         }
 
@@ -200,6 +213,27 @@ public class HomeActivity extends BaseActivity {
         }
 
         return result;
+    }
+
+    private void populateAnimators()
+    {
+        ArrayList<ValueAnimator> valueAnimators = new ArrayList<ValueAnimator>();
+        for(int i = 0; i < mainRec.getChildCount(); i++)
+        {
+            final View view = mainRec.getChildAt(i);
+            ValueAnimator valueAnimator = ValueAnimator.ofInt(cardClosedHeight, cardOpenHeight);
+            valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener()
+            {
+                public void onAnimationUpdate(ValueAnimator animation)
+                {
+                    view.getLayoutParams().height = (Integer) animation.getAnimatedValue();
+                    view.requestLayout();
+                }
+            });
+            valueAnimators.add(valueAnimator);
+        }
+        ValueAnimator[] objectAnimators = valueAnimators.toArray(new ValueAnimator[valueAnimators.size()]);
+        openAnimSet.playTogether(objectAnimators);
     }
 
 }

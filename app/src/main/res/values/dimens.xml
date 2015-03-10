@@ -23,10 +23,10 @@
     <dimen name="item_height">192dp</dimen>
     <dimen name="spacing_large">16dp</dimen>
     <dimen name="navigation_drawer_width">240dp</dimen>
-    <dimen name="fab_button_diameter">56dp</dimen>
-    <dimen name="fab_button_padding">16dp</dimen>
+    <dimen name="fab_button_diameter">66dp</dimen>
+    <dimen name="fab_button_padding">22dp</dimen>
     <dimen name="fab_button_margin_bottom">16dp</dimen>
-    <dimen name="fab_button_margin_right">-56dp</dimen>
+    <dimen name="fab_button_margin_right">-66dp</dimen>
     <dimen name="elevation_low">1dp</dimen>
     <dimen name="elevation_high">8dp</dimen>
 
