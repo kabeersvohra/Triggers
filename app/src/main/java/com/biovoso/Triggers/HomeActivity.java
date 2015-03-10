@@ -207,7 +207,6 @@ public class HomeActivity extends BaseActivity {
             Random random = new Random();
             ci.iconId = ids.get(random.nextInt(ids.size()));
             result.add(ci);
-
         }
 
         return result;
