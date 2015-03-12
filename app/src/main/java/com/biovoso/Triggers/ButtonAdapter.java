@@ -10,9 +10,10 @@ import android.widget.TextView;
 
 import java.util.List;
 
-public class ButtonAdapter extends RecyclerView.Adapter<ButtonAdapter.ContactViewHolder> {
+public class ButtonAdapter extends RecyclerView.Adapter<ButtonAdapter.ButtonViewHolder> {
 
     private List<Button> buttonList;
+    private int height = -1;
 
     public ButtonAdapter(List<Button> buttonList)
     {
@@ -26,29 +27,31 @@ public class ButtonAdapter extends RecyclerView.Adapter<ButtonAdapter.ContactVie
     }
 
     @Override
-    public void onBindViewHolder(ContactViewHolder contactViewHolder, int i) {
-        Button ci = buttonList.get(i);
-        contactViewHolder.vTitle.setText(ci.name);
-        contactViewHolder.vDesc.setText(ci.description);
-        contactViewHolder.vIcon.setImageResource(ci.iconId);
+    public void onBindViewHolder(ButtonViewHolder buttonViewHolder, int i) {
+        if(height != -1)
+            buttonViewHolder.itemView.getLayoutParams().height = height;
+        Button button = buttonList.get(i);
+        buttonViewHolder.vTitle.setText(button.name);
+        buttonViewHolder.vDesc.setText(button.description);
+        buttonViewHolder.vIcon.setImageResource(button.iconId);
     }
 
     @Override
-    public ContactViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+    public ButtonViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View itemView = LayoutInflater.
                 from(viewGroup.getContext()).
                 inflate(R.layout.card_layout, viewGroup, false);
 
-        return new ContactViewHolder(itemView);
+        return new ButtonViewHolder(itemView);
     }
 
-    public static class ContactViewHolder extends RecyclerView.ViewHolder {
+    public static class ButtonViewHolder extends RecyclerView.ViewHolder {
 
         protected TextView vTitle;
         protected TextView vDesc;
         protected ImageView vIcon;
 
-        public ContactViewHolder(View v) {
+        public ButtonViewHolder(View v) {
             super(v);
             vTitle = (TextView) v.findViewById(R.id.title);
             vDesc = (TextView) v.findViewById(R.id.desc);
@@ -59,6 +62,12 @@ public class ButtonAdapter extends RecyclerView.Adapter<ButtonAdapter.ContactVie
     public void redoList(List<Button> buttonList)
     {
         this.buttonList = buttonList;
+        notifyDataSetChanged();
+    }
+
+    public void setHeight(int height)
+    {
+        this.height = height;
         notifyDataSetChanged();
     }
 

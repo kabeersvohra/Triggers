@@ -31,8 +31,8 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.RelativeLayout;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -214,27 +214,38 @@ public class HomeActivity extends BaseActivity {
 
     private void populateAnimators()
     {
-        ArrayList<ValueAnimator> valueAnimators = new ArrayList<ValueAnimator>();
-        for(int i = 0; i < mainRec.getChildCount(); i++)
-        {
-            final View view = mainRec.getChildAt(i);
+
             ValueAnimator valueAnimator = ValueAnimator.ofInt(cardClosedHeight, cardOpenHeight);
             valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener()
             {
                 public void onAnimationUpdate(ValueAnimator animation)
                 {
-                    view.getLayoutParams().height = (Integer) animation.getAnimatedValue();
-                    view.requestLayout();
+                    mainRecAdap.setHeight((Integer) animation.getAnimatedValue());
                 }
             });
-            valueAnimators.add(valueAnimator);
-        }
-        ValueAnimator[] objectAnimators = valueAnimators.toArray(new ValueAnimator[valueAnimators.size()]);
 
         if (mainRec.getChildCount() > 0)
         {
-            openAnimSet.playTogether(objectAnimators);
+            openAnimSet.playTogether(valueAnimator);
         }
+    }
+
+    private static ArrayList<View> getViewsByTag(ViewGroup root, String tag){
+        ArrayList<View> views = new ArrayList<View>();
+        final int childCount = root.getChildCount();
+        for (int i = 0; i < childCount; i++) {
+            final View child = root.getChildAt(i);
+            if (child instanceof ViewGroup) {
+                views.addAll(getViewsByTag((ViewGroup) child, tag));
+            }
+
+            final Object tagObj = child.getTag();
+            if (tagObj != null && tagObj.equals(tag)) {
+                views.add(child);
+            }
+
+        }
+        return views;
     }
 
 }
