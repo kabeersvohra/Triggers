@@ -215,37 +215,26 @@ public class HomeActivity extends BaseActivity {
     private void populateAnimators()
     {
 
-            ValueAnimator valueAnimator = ValueAnimator.ofInt(cardClosedHeight, cardOpenHeight);
-            valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener()
-            {
-                public void onAnimationUpdate(ValueAnimator animation)
-                {
-                    mainRecAdap.setHeight((Integer) animation.getAnimatedValue());
-                }
-            });
+//            ValueAnimator valueAnimator = ValueAnimator.ofInt(cardClosedHeight, cardOpenHeight);
+//            valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener()
+//            {
+//                public void onAnimationUpdate(ValueAnimator animation)
+//                {
+//                    mainRecAdap.setHeight((Integer) animation.getAnimatedValue());
+//                }
+//            });
+//
+//        if (mainRec.getChildCount() > 0)
+//        {
+//            openAnimSet.playTogether(valueAnimator);
+//        }
 
-        if (mainRec.getChildCount() > 0)
-        {
-            openAnimSet.playTogether(valueAnimator);
-        }
-    }
-
-    private static ArrayList<View> getViewsByTag(ViewGroup root, String tag){
-        ArrayList<View> views = new ArrayList<View>();
-        final int childCount = root.getChildCount();
-        for (int i = 0; i < childCount; i++) {
-            final View child = root.getChildAt(i);
-            if (child instanceof ViewGroup) {
-                views.addAll(getViewsByTag((ViewGroup) child, tag));
-            }
-
-            final Object tagObj = child.getTag();
-            if (tagObj != null && tagObj.equals(tag)) {
-                views.add(child);
-            }
-
-        }
-        return views;
+        TypedValue tv = new TypedValue();
+        getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true);
+        int actionBarHeight = getResources().getDimensionPixelSize(tv.resourceId);
+        ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(findViewById(R.id.action_edit), "translationY", 0, -0.5f * actionBarHeight);
+        ObjectAnimator anim = ObjectAnimator.ofFloat(findViewById(R.id.action_edit), "alpha", 1f, 0f);
+        openAnimSet.playTogether(objectAnimator, anim);
     }
 
 }
