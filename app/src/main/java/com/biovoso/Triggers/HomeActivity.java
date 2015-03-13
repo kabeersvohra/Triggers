@@ -215,20 +215,29 @@ public class HomeActivity extends BaseActivity {
     private void populateAnimators()
     {
 
-//            ValueAnimator valueAnimator = ValueAnimator.ofInt(cardClosedHeight, cardOpenHeight);
-//            valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener()
-//            {
-//                public void onAnimationUpdate(ValueAnimator animation)
-//                {
-//                    mainRecAdap.setHeight((Integer) animation.getAnimatedValue());
-//                }
-//            });
-//
-//        if (mainRec.getChildCount() > 0)
-//        {
-//            openAnimSet.playTogether(valueAnimator);
-//        }
+        ValueAnimator openAnimator = ValueAnimator.ofInt(cardClosedHeight, cardOpenHeight);
+        openAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener()
+        {
+            public void onAnimationUpdate(ValueAnimator animation)
+            {
+                mainRecAdap.setHeight((Integer) animation.getAnimatedValue());
+            }
+        });
 
+        ValueAnimator closeAnimator = ValueAnimator.ofInt(cardOpenHeight, cardClosedHeight);
+        closeAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener()
+        {
+            public void onAnimationUpdate(ValueAnimator animation)
+            {
+                mainRecAdap.setHeight((Integer) animation.getAnimatedValue());
+            }
+        });
+
+        if (mainRec.getChildCount() > 0)
+        {
+            openAnimSet.playTogether(openAnimator);
+            closeAnimSet.playTogether(closeAnimator);
+        }
         TypedValue tv = new TypedValue();
         getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true);
         int actionBarHeight = getResources().getDimensionPixelSize(tv.resourceId);
@@ -236,5 +245,6 @@ public class HomeActivity extends BaseActivity {
         ObjectAnimator anim = ObjectAnimator.ofFloat(findViewById(R.id.action_edit), "alpha", 1f, 0f);
         openAnimSet.playTogether(objectAnimator, anim);
     }
+
 
 }
