@@ -62,9 +62,10 @@ public class HomeActivity extends BaseActivity {
     private ObjectAnimator floatIn;
     private ObjectAnimator floatOut;
     private float fabOffset;
+    private boolean editMode = true;
 
-    private AnimatorSet openAnimSet = new AnimatorSet();;
-    private AnimatorSet closeAnimSet;
+    private AnimatorSet openAnimSet = new AnimatorSet();
+    private AnimatorSet closeAnimSet = new AnimatorSet();
 
     private int cardClosedHeight;
     private int cardOpenHeight;
@@ -73,10 +74,9 @@ public class HomeActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        fabOffset = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 72, getResources().getDisplayMetrics());
+        fabOffset = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, -72, getResources().getDisplayMetrics());
         cardClosedHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 110, getResources().getDisplayMetrics());
         cardOpenHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 158, getResources().getDisplayMetrics());
-
 
         fabImageButton = (ImageButton) findViewById(R.id.fab_image_button);
 
@@ -88,8 +88,8 @@ public class HomeActivity extends BaseActivity {
             }
         });
 
-        floatIn = ObjectAnimator.ofFloat(fabImageButton, "translationX", 0, (fabOffset * -1));
-        floatOut = ObjectAnimator.ofFloat(fabImageButton, "translationX", 0, fabOffset);
+        floatIn = ObjectAnimator.ofFloat(fabImageButton, "translationX", 0, fabOffset);
+        floatOut = ObjectAnimator.ofFloat(fabImageButton, "translationX", fabOffset, 0);
 
         db = new DatabaseHelper(getApplicationContext());
         Group group0 = new Group();
@@ -180,17 +180,20 @@ public class HomeActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-//            case android.R.id.home:
-//                drawer.openDrawer(Gravity.START);
-//                return true;
             case R.id.action_edit:
-                //I want to make the edit button smaller and when the button is pressed to
-                // change to an x and call another function onselect when changed but I don't
-                // know how
-                floatIn.start();
-                fabImageButton.setTranslationX(-1 * fabOffset);
-                populateAnimators();
-                openAnimSet.start();
+                if(editMode) {
+                    item.setIcon(R.drawable.exitediting);
+                    floatIn.start();
+                    populateAnimators();
+                    openAnimSet.start();
+                    editMode = false;
+                } else {
+                    item.setIcon(R.drawable.editbutton);
+                    floatOut.start();
+                    populateAnimators();
+                    closeAnimSet.start();
+                    editMode = true;
+                }
                 return true;
         }
 
@@ -215,8 +218,17 @@ public class HomeActivity extends BaseActivity {
     private void populateAnimators()
     {
 
-            ValueAnimator valueAnimator = ValueAnimator.ofInt(cardClosedHeight, cardOpenHeight);
-            valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener()
+            ValueAnimator openAnimator = ValueAnimator.ofInt(cardClosedHeight, cardOpenHeight);
+            openAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener()
+            {
+                public void onAnimationUpdate(ValueAnimator animation)
+                {
+                    mainRecAdap.setHeight((Integer) animation.getAnimatedValue());
+                }
+            });
+
+            ValueAnimator closeAnimator = ValueAnimator.ofInt(cardOpenHeight, cardClosedHeight);
+            closeAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener()
             {
                 public void onAnimationUpdate(ValueAnimator animation)
                 {
@@ -226,26 +238,9 @@ public class HomeActivity extends BaseActivity {
 
         if (mainRec.getChildCount() > 0)
         {
-            openAnimSet.playTogether(valueAnimator);
+            openAnimSet.playTogether(openAnimator);
+            closeAnimSet.playTogether(closeAnimator);
         }
-    }
-
-    private static ArrayList<View> getViewsByTag(ViewGroup root, String tag){
-        ArrayList<View> views = new ArrayList<View>();
-        final int childCount = root.getChildCount();
-        for (int i = 0; i < childCount; i++) {
-            final View child = root.getChildAt(i);
-            if (child instanceof ViewGroup) {
-                views.addAll(getViewsByTag((ViewGroup) child, tag));
-            }
-
-            final Object tagObj = child.getTag();
-            if (tagObj != null && tagObj.equals(tag)) {
-                views.add(child);
-            }
-
-        }
-        return views;
     }
 
 }
