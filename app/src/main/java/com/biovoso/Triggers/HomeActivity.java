@@ -19,19 +19,19 @@ package com.biovoso.Triggers;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.internal.view.menu.ActionMenuItemView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageButton;
 
 import java.lang.reflect.Field;
@@ -42,10 +42,7 @@ import java.util.Random;
 
 public class HomeActivity extends BaseActivity {
 
-    private DatabaseHelper db;
     private List<Integer> ids;
-
-    private Toolbar toolbar;
 
     private RecyclerView navRec;
     private RecyclerView.Adapter navRecAdap;
@@ -59,46 +56,39 @@ public class HomeActivity extends BaseActivity {
     private DrawerLayout drawer;
     private ActionBarDrawerToggle drawerToggle;
     private ImageButton fabImageButton;
-    private ObjectAnimator floatIn;
-    private ObjectAnimator floatOut;
-    private float fabOffset;
+    private boolean editMode = false;
 
-    private AnimatorSet openAnimSet = new AnimatorSet();;
-    private AnimatorSet closeAnimSet;
+    private AnimatorSet openAnimSet = new AnimatorSet();
+    private AnimatorSet closeAnimSet = new AnimatorSet();
 
-    private int cardClosedHeight;
-    private int cardOpenHeight;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
 
-        fabOffset = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 72, getResources().getDisplayMetrics());
-        cardClosedHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 110, getResources().getDisplayMetrics());
-        cardOpenHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 158, getResources().getDisplayMetrics());
+        final Intent intent = new Intent(this, EditActivity.class);
 
+        toolbar = (android.support.v7.widget.Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         fabImageButton = (ImageButton) findViewById(R.id.fab_image_button);
 
         fabImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                db.createButton(createList(1).get(0));
-                mainRecAdap.redoList(db.getButtons(0));
+//                db.createButton(createList(1).get(0));
+//                mainRecAdap.redoList(db.getButtons(0));
+                startActivity(intent);
             }
         });
 
-        floatIn = ObjectAnimator.ofFloat(fabImageButton, "translationX", 0, (fabOffset * -1));
-        floatOut = ObjectAnimator.ofFloat(fabImageButton, "translationX", 0, fabOffset);
 
-        db = new DatabaseHelper(getApplicationContext());
+        // FIX THIS
         Group group0 = new Group();
         group0.id = 0;
         group0.name = "zero";
         db.createGroup(group0);
-
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
         navRec = (RecyclerView) findViewById(R.id.RecyclerView);
         navRec.setHasFixedSize(true);
@@ -140,8 +130,6 @@ public class HomeActivity extends BaseActivity {
 
         loadIcons();
 
-
-
     }
 
     private void loadIcons()
@@ -174,23 +162,25 @@ public class HomeActivity extends BaseActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
+        createAnimatorSets();
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-//            case android.R.id.home:
-//                drawer.openDrawer(Gravity.START);
-//                return true;
-            case R.id.action_edit:
-                //I want to make the edit button smaller and when the button is pressed to
-                // change to an x and call another function onselect when changed but I don't
-                // know how
-                floatIn.start();
-                fabImageButton.setTranslationX(-1 * fabOffset);
-                populateAnimators();
-                openAnimSet.start();
+        switch (item.getItemId())
+        {
+            case R.id.action_mainedit:
+                if (!editMode)
+                {
+                    openAnimSet.start();
+                    editMode = true;
+                }
+                else
+                {
+                    closeAnimSet.start();
+                    editMode = false;
+                }
                 return true;
         }
 
@@ -212,39 +202,95 @@ public class HomeActivity extends BaseActivity {
         return result;
     }
 
-    private void populateAnimators()
+    private void createAnimatorSets()
     {
+        final ActionMenuItemView editButton = (ActionMenuItemView) toolbar.getChildAt(1).findViewById(R.id.action_edit);
+        final ActionMenuItemView closeButton = (ActionMenuItemView) toolbar.getChildAt(1).findViewById(R.id.action_close);
+        final ActionMenuItemView mainButton = (ActionMenuItemView) toolbar.getChildAt(1).findViewById(R.id.action_mainedit);
 
-        ValueAnimator openAnimator = ValueAnimator.ofInt(cardClosedHeight, cardOpenHeight);
-        openAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener()
-        {
-            public void onAnimationUpdate(ValueAnimator animation)
-            {
-                mainRecAdap.setHeight((Integer) animation.getAnimatedValue());
-            }
-        });
+        float fabOffset = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, -86, getResources().getDisplayMetrics());
+        int cardClosedHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 110, getResources().getDisplayMetrics());
+        int cardOpenHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 158, getResources().getDisplayMetrics());
 
-        ValueAnimator closeAnimator = ValueAnimator.ofInt(cardOpenHeight, cardClosedHeight);
-        closeAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener()
-        {
-            public void onAnimationUpdate(ValueAnimator animation)
-            {
-                mainRecAdap.setHeight((Integer) animation.getAnimatedValue());
-            }
-        });
-
-        if (mainRec.getChildCount() > 0)
-        {
-            openAnimSet.playTogether(openAnimator);
-            closeAnimSet.playTogether(closeAnimator);
-        }
         TypedValue tv = new TypedValue();
         getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true);
         int actionBarHeight = getResources().getDimensionPixelSize(tv.resourceId);
-        ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(findViewById(R.id.action_edit), "translationY", 0, -0.5f * actionBarHeight);
-        ObjectAnimator anim = ObjectAnimator.ofFloat(findViewById(R.id.action_edit), "alpha", 1f, 0f);
-        openAnimSet.playTogether(objectAnimator, anim);
-    }
 
+        if(editButton != null && closeButton != null)
+        {
+
+            closeButton.setAlpha(0f);
+            closeButton.setTranslationX(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 96, getResources().getDisplayMetrics()));
+            mainButton.setAlpha(0f);
+            editButton.setTranslationX(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 48, getResources().getDisplayMetrics()));
+
+
+            //Initial press of edit button
+
+            // Edit button going out
+            ObjectAnimator editOut_translateY = ObjectAnimator.ofFloat(editButton, "translationY", 0, -0.3f * actionBarHeight);
+            editOut_translateY.setDuration(150);
+            ObjectAnimator editOut_alpha = ObjectAnimator.ofFloat(editButton, "alpha", 1f, 0f);
+            editOut_alpha.setDuration(100);
+            editOut_alpha.setStartDelay(50);
+
+            // Close button going in
+            ObjectAnimator closeIn_translateY = ObjectAnimator.ofFloat(closeButton, "translationY", 0.3f * actionBarHeight, 0);
+            closeIn_translateY.setDuration(150);
+            ObjectAnimator closeIn_alpha = ObjectAnimator.ofFloat(closeButton, "alpha", 0f, 1f);
+            closeIn_alpha.setDuration(100);
+            closeIn_alpha.setStartDelay(50);
+
+            // FAB going in
+            ObjectAnimator floatIn = ObjectAnimator.ofFloat(fabImageButton, "translationY", 0, fabOffset);
+
+            // Card height growing
+            ValueAnimator cardIn_height = ValueAnimator.ofInt(cardClosedHeight, cardOpenHeight);
+            cardIn_height.addUpdateListener(new ValueAnimator.AnimatorUpdateListener()
+            {
+                public void onAnimationUpdate(ValueAnimator animation)
+                {
+                    mainRecAdap.setHeight((Integer) animation.getAnimatedValue());
+                }
+            });
+
+
+            //Press of close edit button
+
+
+            // Edit button going in
+            ObjectAnimator editIn_translateY = ObjectAnimator.ofFloat(editButton, "translationY", -0.3f * actionBarHeight, 0);
+            editIn_translateY.setDuration(150);
+            ObjectAnimator editIn_alpha = ObjectAnimator.ofFloat(editButton, "alpha", 0f, 1f);
+            editIn_alpha.setDuration(100);
+            editIn_alpha.setStartDelay(50);
+
+            // Close button going out
+            ObjectAnimator closeOut_translateY = ObjectAnimator.ofFloat(closeButton, "translationY", 0,  0.3f * actionBarHeight);
+            closeOut_translateY.setDuration(150);
+            ObjectAnimator closeOut_alpha = ObjectAnimator.ofFloat(closeButton, "alpha", 1f, 0f);
+            closeOut_alpha.setDuration(100);
+            closeOut_alpha.setStartDelay(50);
+
+            // FAB going out
+            ObjectAnimator floatOut = ObjectAnimator.ofFloat(fabImageButton, "translationY", fabOffset, 0);
+
+
+            // Card height shrinking
+            ValueAnimator cardOut_height = ValueAnimator.ofInt(cardOpenHeight, cardClosedHeight);
+            cardOut_height.addUpdateListener(new ValueAnimator.AnimatorUpdateListener()
+            {
+                public void onAnimationUpdate(ValueAnimator animation)
+                {
+                    mainRecAdap.setHeight((Integer) animation.getAnimatedValue());
+                }
+            });
+
+            openAnimSet.playTogether(editOut_translateY, editOut_alpha, closeIn_translateY, closeIn_alpha, floatIn, cardIn_height);
+            closeAnimSet.playTogether(editIn_translateY, editIn_alpha, closeOut_translateY, closeOut_alpha, floatOut, cardOut_height);
+
+        }
+
+    }
 
 }

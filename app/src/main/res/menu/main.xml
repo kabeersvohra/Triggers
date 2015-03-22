@@ -18,8 +18,25 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".HomeActivity">
+
+
+
+    <item android:id="@+id/action_close"
+          android:title="Close"
+          android:icon="@drawable/exitediting"
+          android:enabled="false"
+          app:showAsAction="always"/>
+
     <item android:id="@+id/action_edit"
-        android:title="Edit"
-        android:icon="@drawable/editbutton"
-        app:showAsAction="always"/>
+          android:title="Edit"
+          android:icon="@drawable/editbutton"
+          android:enabled="false"
+          app:showAsAction="always"/>
+
+    <item android:id="@+id/action_mainedit"
+          android:title="MainEdit"
+          android:icon="@drawable/exitediting"
+          android:enabled="true"
+          app:showAsAction="always"/>
+
 </menu>
