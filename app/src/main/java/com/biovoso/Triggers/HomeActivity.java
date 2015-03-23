@@ -27,6 +27,7 @@ import android.support.v7.internal.view.menu.ActionMenuItemView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.Menu;
@@ -57,6 +58,7 @@ public class HomeActivity extends BaseActivity {
     private ActionBarDrawerToggle drawerToggle;
     private ImageButton fabImageButton;
     private boolean editMode = false;
+    private boolean startMode = true;
 
     private AnimatorSet openAnimSet = new AnimatorSet();
     private AnimatorSet closeAnimSet = new AnimatorSet();
@@ -65,6 +67,7 @@ public class HomeActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
+        Log.d("test", "start onCreate");
         super.onCreate(savedInstanceState);
 
         final Intent intent = new Intent(this, EditActivity.class);
@@ -129,6 +132,25 @@ public class HomeActivity extends BaseActivity {
         drawerToggle.syncState();               // Finally we set the drawer toggle sync State
 
         loadIcons();
+        Log.d("test", "end onCreate");
+
+    }
+
+    @Override
+    protected void onResume()
+    {
+        Log.d("test", "start onResume");
+        super.onResume();
+        Log.d("test", "end onResume");
+
+    }
+
+    @Override
+    protected void onPostResume()
+    {
+        Log.d("test", "start onPostResume");
+        super.onPostResume();
+        Log.d("test", "end onPostResume");
 
     }
 
@@ -161,8 +183,17 @@ public class HomeActivity extends BaseActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        Log.d("test", "start onCreateOptionsMenu");
         getMenuInflater().inflate(R.menu.main, menu);
-        createAnimatorSets();
+        Log.d("test", "end onCreateOptionsMenu");
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        Log.d("test", "start onPrepareOptionsMenu");
+        super.onPrepareOptionsMenu(menu);
+        Log.d("test", "end onPrepareOptionsMenu");
         return true;
     }
 
@@ -173,6 +204,11 @@ public class HomeActivity extends BaseActivity {
             case R.id.action_mainedit:
                 if (!editMode)
                 {
+                    if(startMode)
+                    {
+                        createAnimatorSets();
+                        startMode = false;
+                    }
                     openAnimSet.start();
                     editMode = true;
                 }
@@ -190,7 +226,8 @@ public class HomeActivity extends BaseActivity {
     private List<Button> createList(int size) {
 
         List<Button> result = new ArrayList<Button>();
-        for (int i=1; i <= size; i++) {
+        for (int i=1; i <= size; i++)
+        {
             Button ci = new Button(this);
             ci.name = Integer.toString(i);
             ci.description = "udfiufbiub";
@@ -218,10 +255,12 @@ public class HomeActivity extends BaseActivity {
 
         if(editButton != null && closeButton != null)
         {
-
+            closeButton.setIcon(getResources().getDrawable(R.drawable.exitediting));
             closeButton.setAlpha(0f);
             closeButton.setTranslationX(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 96, getResources().getDisplayMetrics()));
-            mainButton.setAlpha(0f);
+            //mainButton.setAlpha(0f);
+            mainButton.setIcon(getResources().getDrawable(R.drawable.mainbutton));
+            editButton.setIcon(getResources().getDrawable(R.drawable.editbutton));
             editButton.setTranslationX(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 48, getResources().getDisplayMetrics()));
 
 
