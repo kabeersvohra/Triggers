@@ -18,7 +18,7 @@ public class EditActivity extends BaseActivity
     {
         super.onCreate(savedInstanceState);
 
-        overridePendingTransition(R.anim.animation_enter, R.anim.animation_exit);
+        overridePendingTransition(R.anim.animation_exit, R.anim.animation_enter);
     }
 
 
